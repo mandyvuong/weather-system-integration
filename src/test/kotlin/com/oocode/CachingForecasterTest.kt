@@ -30,6 +30,22 @@ internal class CachingForecasterTest {
         forecaster.getForecast(DayOfWeek.FRIDAY, "London")
         assertThat(delegate.counter, equalTo(1))
     }
+
+    @Test
+    fun `should store more than one forecast in cache`() {
+        val delegate = FakeForecaster()
+        val forecaster = CachingForecaster(delegate)
+
+        forecaster.getForecast(DayOfWeek.FRIDAY, "London")
+        forecaster.getForecast(DayOfWeek.FRIDAY, "London")
+        assertThat(delegate.counter, equalTo(1))
+        assertThat(forecaster.getForecast(DayOfWeek.FRIDAY, "London"), equalTo(Forecast(11, 22, "Cloudy")))
+
+        forecaster.getForecast(DayOfWeek.THURSDAY, "NY")
+        forecaster.getForecast(DayOfWeek.THURSDAY, "NY")
+        assertThat(delegate.counter, equalTo(2))
+        assertThat(forecaster.getForecast(DayOfWeek.THURSDAY, "NY"), equalTo(Forecast(10, 12, "Snowy")))
+    }
 }
 
 class FakeForecaster : Forecaster {
