@@ -21,10 +21,22 @@ internal class CachingForecasterTest {
         assertThat(forecaster.getForecast(DayOfWeek.FRIDAY, "London"), equalTo(Forecast(11, 22, "Cloudy")))
         assertThat(forecaster.getForecast(DayOfWeek.THURSDAY, "NY"), equalTo(Forecast(10, 12, "Snowy")))
     }
+
+    @Test
+    fun `should return forecast if it exists in the cache`() {
+        val delegate = FakeForecaster()
+        val forecaster = CachingForecaster(delegate)
+        forecaster.getForecast(DayOfWeek.FRIDAY, "London")
+        forecaster.getForecast(DayOfWeek.FRIDAY, "London")
+        assertThat(delegate.counter, equalTo(1))
+    }
 }
 
 class FakeForecaster : Forecaster {
+    var counter: Int = 0
+
     override fun getForecast(day: DayOfWeek, location: String): Forecast {
+        counter++
         if (day == DayOfWeek.FRIDAY && location == "London") {
             return Forecast(11, 22, "Cloudy")
         } else {
