@@ -1,3 +1,6 @@
+import com.oocode.CachingForecaster
+import com.oocode.Forecaster
+import com.oocode.ForecasterAdapter
 import com.teamoptimization.ForecasterClient
 import com.teamoptimization.LocatorClient
 import java.time.DayOfWeek
@@ -6,14 +9,17 @@ fun main(args: Array<String>) {
     if (args.size != 2) {
         throw RuntimeException("Must specify Day and Place")
     }
-    forecast(args[0], args[1])
+    val forecasterClient = ForecasterClient()
+    val locationClient = LocatorClient()
+    val forecaster = CachingForecaster(ForecasterAdapter(forecasterClient, locationClient))
+    forecast(forecaster, args[0], args[1])
+    forecast(forecaster, args[0], args[1])
+    forecast(forecaster, args[0], args[1])
 }
 
-fun forecast(day: String, place: String) {
-    val forecaster = ForecasterClient()
+fun forecast(forecaster: Forecaster, day: String, place: String) {
     val dayNumber = DayOfWeek.valueOf(day.uppercase()).value
-    val location = LocatorClient().locationOf(place)
-    val (minTemp, maxTemp, description) = forecaster.forecast(dayNumber, location.lat, location.long)
+    val (minTemp, maxTemp, description) = forecaster.getForecast(DayOfWeek.of(dayNumber), place)
     println("forecaster: $place day=$day min=$minTemp max=$maxTemp description=$description")
 }
 
