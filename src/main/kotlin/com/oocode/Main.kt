@@ -1,7 +1,4 @@
-import com.oocode.CachingForecaster
-import com.oocode.Forecaster
-import com.oocode.ForecasterAdapter
-import com.oocode.ForecastingAdaptor
+import com.oocode.*
 import com.teamoptimization.ForecasterClient
 import com.teamoptimization.ForecastingClient
 import com.teamoptimization.LocatorClient
@@ -24,6 +21,12 @@ fun main(args: Array<String>) {
     forecast(newForecaster, args[0], args[1])
     forecast(newForecaster, args[0], args[1])
     forecast(newForecaster, args[0], args[1])
+
+    val averagingForecaster = AveragingForecaster(forecaster, newForecaster)
+
+    forecast(averagingForecaster, args[0], args[1])
+    forecast(averagingForecaster, args[0], args[1])
+    forecast(averagingForecaster, args[0], args[1])
 }
 
 fun forecast(forecaster: Forecaster, day: String, place: String) {
